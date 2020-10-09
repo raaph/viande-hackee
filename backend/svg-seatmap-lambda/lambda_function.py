@@ -3,12 +3,8 @@ import svgwrite
 import math
 import os
 import io
-import shutil
-import subprocess
 import base64
-import zipfile
 import boto3
-import requests
 import sys
 
 
