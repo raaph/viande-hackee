@@ -1,0 +1,4 @@
+appdirs==1.4.4
+boto3==1.15.16
+s3transfer==0.3.3
+svgwrite==1.4
