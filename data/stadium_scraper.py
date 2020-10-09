@@ -5,8 +5,6 @@ import json
 urlBlocks = 'https://static.pacifa3d.com/StadeDeSuisseBERN/WIMS/BSCYB_FOOTBALL_v2020-2021/f/w/blocks.json'
 responseBlocks = requests.get(urlBlocks)
 blocksJson = json.loads(responseBlocks.text)
-f = open("testFile2.json", "w")
-
 blocks = []
 
 for blockName in blocksJson:
@@ -41,6 +39,7 @@ stadium['blocks'] = blocks
 
 stadiumJson = json.dumps(stadium)
 
+f = open("stadium_data.json", "w")
 f.write(stadiumJson)
 f.close()
 
