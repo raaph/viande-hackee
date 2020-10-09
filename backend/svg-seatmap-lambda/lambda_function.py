@@ -56,7 +56,7 @@ def generate_balcony_svg(rows_json, seat):
                             SEAT_PADDING * seatNumber + CIRCLE_RADIUS)
 
     dwg = svgwrite.Drawing(
-        'output/balcony.svg', (max_right - min_left, max_y), profile='tiny', fill="#FFFFFF")
+        '/tmp/balcony.svg', (max_right - min_left, max_y), profile='tiny', fill="#FFFFFF")
     dwg.add(dwg.rect(insert=(0, 0), size=('100%', '100%'),
                      rx=None, ry=None, fill='#000000'))
 
@@ -114,7 +114,7 @@ def generate_parquett_svg(rows_json, seat):
                         STAIRS_WITH_RIGHT + SEAT_PADDING * row["right"] + CIRCLE_RADIUS)
 
     dwg = svgwrite.Drawing(
-        'output/parquett.svg', (max_right - min_left, max_y), profile='tiny', fill="#FFFFFF")
+        '/tmp/parquett.svg', (max_right - min_left, max_y), profile='tiny', fill="#FFFFFF")
     dwg.add(dwg.rect(insert=(0, 0), size=('100%', '100%'),
                      rx=None, ry=None, fill='#000000'))
 
@@ -162,8 +162,6 @@ def draw_seat(dwg, x_offset, y_offset, hot_seat):
 
 def lambda_handler(event, context):
 
-    os.mkdir("/output")
-
     generate_parquett_svg([
         {"left": 10, "right": 10},
         {"left": 10, "right": 10},
@@ -191,7 +189,7 @@ def lambda_handler(event, context):
     first_object = s3_resource.Object(
         bucket_name="/svg-seat-maps", key="test.svg")
 
-    first_object.upload_file("output/parquett.svg")
+    first_object.upload_file("/tmp/parquett.svg")
     return {
         'statusCode': 200,
         'body': json.dumps('Hello romain')
