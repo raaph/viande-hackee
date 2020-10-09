@@ -1,7 +1,9 @@
 import json
 
-SMALLER_SIDE = 'left'
+SMALLER_SIDE = 'left' # meaning 300 is smaller than 400
 LARGER_SIDE = 'right'
+MIDDLE_SIDE = 'middle'
+MIDDLE_SEATS_COUNT = 12
 
 def prepare_block_for_drawing(block_number):
     block = get_block(block_number)
@@ -21,12 +23,16 @@ def prepare_block_for_drawing(block_number):
                 counted_seats_dict[1000] = 0
             keys = list(counted_seats_dict.keys())
 
+        subtract_amount = 0
+        if block['level'] == 'Balkon' and row['number'] < 3:
+            subtract_amount = MIDDLE_SEATS_COUNT
+
         if keys[0] < keys[1]:
             prepared_row[SMALLER_SIDE] = counted_seats_dict[keys[0]]
-            prepared_row[LARGER_SIDE] = counted_seats_dict[keys[1]]
+            prepared_row[LARGER_SIDE] = counted_seats_dict[keys[1]] - subtract_amount
         else:
             prepared_row[SMALLER_SIDE] = counted_seats_dict[keys[1]]
-            prepared_row[LARGER_SIDE] = counted_seats_dict[keys[0]]
+            prepared_row[LARGER_SIDE] = counted_seats_dict[keys[0]] - subtract_amount
 
     prepared_rows.reverse()
     return json.dumps(prepared_rows)
@@ -60,9 +66,20 @@ def get_highlighted_seat(block_number, row_number, seat_number):
     else:
         sorted_seats[keys[1]].sort()
         if keys[0] < keys[1]:
-            highlighted_seat['side'] = LARGER_SIDE
-            # count from bottom to top
-            highlighted_seat['number'] = count_seats_from_stairs(sorted_seats[keys[1]], seat_number, True)
+            block = get_block(block_number)
+            if block['level'] == 'Balkon' and row['number'] < 3:
+                if seat_number % 100 < MIDDLE_SEATS_COUNT:
+                    highlighted_seat['side'] = MIDDLE_SIDE
+                    highlighted_seat['number'] = seat_number % 100
+                else:
+                    highlighted_seat['side'] = LARGER_SIDE
+                    # count from bottom to top
+                    highlighted_seat['number'] = count_seats_from_stairs(sorted_seats[keys[1]], seat_number, True) - MIDDLE_SEATS_COUNT
+
+            else:
+                highlighted_seat['side'] = LARGER_SIDE
+                # count from bottom to top
+                highlighted_seat['number'] = count_seats_from_stairs(sorted_seats[keys[1]], seat_number, True)
         else:
             highlighted_seat['side'] = SMALLER_SIDE
             # count from top to bottom
@@ -96,9 +113,6 @@ def get_json(filepath):
     return json.loads(content)
 
 def count_seats_from_stairs(sorted_seats, seat_number, count_bottom_up):
-    print(sorted_seats)
-    print(seat_number)
-    print(count_bottom_up)
     counter = 0
     if not count_bottom_up:
         sorted_seats.reverse()
