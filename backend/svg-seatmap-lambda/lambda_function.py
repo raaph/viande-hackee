@@ -187,7 +187,7 @@ def lambda_handler(event, context):
     # get reference to S3 client
     s3_resource = boto3.resource('s3')
     first_object = s3_resource.Object(
-        bucket_name="/svg-seat-maps", key="test.svg")
+        bucket_name="svg-seat-maps", key="test.svg")
 
     first_object.upload_file("/tmp/parquett.svg")
     return {
