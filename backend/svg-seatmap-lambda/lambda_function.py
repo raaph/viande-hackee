@@ -61,8 +61,6 @@ def generate_balcony_svg(rows_json, seat):
 
     dwg = svgwrite.Drawing(
         '/tmp/output.svg', (max_right - min_left, max_y), profile='tiny', fill="#FFFFFF")
-    dwg.add(dwg.rect(insert=(0, 0), size=('100%', '100%'),
-                     rx=None, ry=None, fill='#000000'))
 
     for row_number, row in enumerate(rows_json):
 
@@ -119,8 +117,6 @@ def generate_parquett_svg(rows_json, seat):
 
     dwg = svgwrite.Drawing(
         '/tmp/output.svg', (max_right - min_left, max_y), profile='tiny', fill="#FFFFFF")
-    dwg.add(dwg.rect(insert=(0, 0), size=('100%', '100%'),
-                     rx=None, ry=None, fill='#000000'))
 
     for row_number, row in enumerate(rows_json):
         x_offset = -min_left - PERRSPECTIVE_X * row_number
