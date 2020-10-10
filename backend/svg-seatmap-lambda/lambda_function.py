@@ -196,7 +196,8 @@ def lambda_handler(event, context):
     first_object = s3_resource.Object(
         bucket_name="svg-seat-maps", key=filename)
 
-    first_object.upload_file("/tmp/output.svg")
+    first_object.upload_file(
+        "/tmp/output.svg", ExtraArgs={'ContentType': 'image/svg+xml'})
 
     return {
         'statusCode': 200,
