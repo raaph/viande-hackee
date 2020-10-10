@@ -20,12 +20,12 @@ SEAT_VERTICAL_SHIFT = 7
 CIRCLE_RADIUS = 5
 
 BALCONY_OFFSET_LEFT = {0: 3, 1: 3, 2: 3}
-BALCONY_OFFSET_RIGHT = {0: 10, 1: 10, 2: 10, 3: 7, 4: 7, 5: 7, 6: 5, 13: -2}
+BALCONY_OFFSET_RIGHT = {0: 10, 1: 10, 2: 10, 3: 7, 4: 7, 5: 7, 6: 5, 20: -2}
 
 BALCONY_FIRST_ROWS = 2
 BALCONY_FIRST_ROWS_MIDDLE_SEATS = 12
 
-SMALLER_SIDE = 'left' # meaning seat number e.g. 300 is smaller than 400
+SMALLER_SIDE = 'left'  # meaning seat number e.g. 300 is smaller than 400
 LARGER_SIDE = 'right'
 MIDDLE_SIDE = 'middle'
 
@@ -85,7 +85,7 @@ def generate_balcony_svg(rows_json, seat):
                 draw_seat(dwg, x_offset - x_left_additional + STAIRS_WITH_RIGHT +
                           (SEAT_PADDING * 0.9) * seatNumber, y_offset, seat["side"] == "middle" and seat["row"] == row_number and seat["number"] == seatNumber)
 
-        if row_number < 12:
+        if row_number < 20:
             draw_stairs(dwg, x_offset - x_left_additional, y_offset)
 
         for seatNumber in range(row["left"]):
@@ -185,17 +185,17 @@ def lambda_handler(event, context):
         file.write(lines)
 
     rows = prepare_block_for_drawing(block_number)
-    highlighted_seat = get_highlighted_seat(block_number, row_number, seat_number)
+    highlighted_seat = get_highlighted_seat(
+        block_number, row_number, seat_number)
 
     block = get_block(block_number)
 
     if block['level'] == 'Balkon':
         generate_balcony_svg(rows, highlighted_seat)
     else:
-        generate_parquett_svg(rows, highlighted_seat)    
+        generate_parquett_svg(rows, highlighted_seat)
 
     filename = f"{block_number}-{row_number}-{seat_number}.svg"
-
 
     first_object = s3_resource.Object(
         bucket_name="svg-seat-maps", key=filename)
@@ -207,6 +207,7 @@ def lambda_handler(event, context):
         'body': json.dumps({'filename': filename})
     }
 
+
 def prepare_block_for_drawing(block_number):
     block = get_block(block_number)
     prepared_rows = []
@@ -216,7 +217,7 @@ def prepare_block_for_drawing(block_number):
         prepared_rows.append(prepared_row)
 
         counted_seats_dict = count_seats(row['seats'])
-        
+
         keys = list(counted_seats_dict.keys())
         if len(keys) == 1:
             if 1 in keys:
@@ -231,13 +232,16 @@ def prepare_block_for_drawing(block_number):
 
         if keys[0] < keys[1]:
             prepared_row[SMALLER_SIDE] = counted_seats_dict[keys[0]]
-            prepared_row[LARGER_SIDE] = counted_seats_dict[keys[1]] - subtract_amount
+            prepared_row[LARGER_SIDE] = counted_seats_dict[keys[1]
+                                                           ] - subtract_amount
         else:
             prepared_row[SMALLER_SIDE] = counted_seats_dict[keys[1]]
-            prepared_row[LARGER_SIDE] = counted_seats_dict[keys[0]] - subtract_amount
+            prepared_row[LARGER_SIDE] = counted_seats_dict[keys[0]
+                                                           ] - subtract_amount
 
     prepared_rows.reverse()
     return prepared_rows
+
 
 def get_highlighted_seat(block_number, row_number, seat_number):
     row = get_row(block_number, row_number)
@@ -259,12 +263,14 @@ def get_highlighted_seat(block_number, row_number, seat_number):
         if keys[0] < keys[1]:
             highlighted_seat['side'] = SMALLER_SIDE
             # count from top to bottom
-            highlighted_seat['number'] = count_seats_from_stairs(sorted_seats[keys[0]], seat_number, False)
+            highlighted_seat['number'] = count_seats_from_stairs(
+                sorted_seats[keys[0]], seat_number, False)
         else:
             highlighted_seat['side'] = LARGER_SIDE
             # count from bottom to top
-            highlighted_seat['number'] = count_seats_from_stairs(sorted_seats[keys[0]], seat_number, True)
-        
+            highlighted_seat['number'] = count_seats_from_stairs(
+                sorted_seats[keys[0]], seat_number, True)
+
     else:
         sorted_seats[keys[1]].sort()
         if keys[0] < keys[1]:
@@ -276,18 +282,21 @@ def get_highlighted_seat(block_number, row_number, seat_number):
                 else:
                     highlighted_seat['side'] = LARGER_SIDE
                     # count from bottom to top
-                    highlighted_seat['number'] = count_seats_from_stairs(sorted_seats[keys[1]], seat_number, True) - BALCONY_FIRST_ROWS_MIDDLE_SEATS
+                    highlighted_seat['number'] = count_seats_from_stairs(
+                        sorted_seats[keys[1]], seat_number, True) - BALCONY_FIRST_ROWS_MIDDLE_SEATS
 
             else:
                 highlighted_seat['side'] = LARGER_SIDE
                 # count from bottom to top
-                highlighted_seat['number'] = count_seats_from_stairs(sorted_seats[keys[1]], seat_number, True)
+                highlighted_seat['number'] = count_seats_from_stairs(
+                    sorted_seats[keys[1]], seat_number, True)
         else:
             highlighted_seat['side'] = SMALLER_SIDE
             # count from top to bottom
-            highlighted_seat['number'] = count_seats_from_stairs(sorted_seats[keys[1]], seat_number, False)
+            highlighted_seat['number'] = count_seats_from_stairs(
+                sorted_seats[keys[1]], seat_number, False)
     return highlighted_seat
-    
+
 
 def get_block(block_number):
     stadium_json = get_json("/tmp/stadium_data.json")
@@ -297,7 +306,8 @@ def get_block(block_number):
         if block['number'].lower() == block_number.lower():
             return block
 
-    raise Exception('No block found with name {0!s}!'.format(block_number))        
+    raise Exception('No block found with name {0!s}!'.format(block_number))
+
 
 def get_row(block_number, row_number):
     block = get_block(block_number)
@@ -305,7 +315,7 @@ def get_row(block_number, row_number):
         if int(row['number']) == int(row_number):
             return row
 
-    raise Exception('No row found with number {0!s}!'.format(row_number))    
+    raise Exception('No row found with number {0!s}!'.format(row_number))
 
 
 def get_json(filepath):
@@ -313,6 +323,7 @@ def get_json(filepath):
     content = f.read()
     f.close()
     return json.loads(content)
+
 
 def count_seats_from_stairs(sorted_seats, seat_number, count_bottom_up):
     counter = 0
@@ -322,8 +333,9 @@ def count_seats_from_stairs(sorted_seats, seat_number, count_bottom_up):
         if int(seat) == int(seat_number):
             return counter
         counter += 1
-    
-    raise Exception('No seat found with number {0!s}!'.format(seat_number))    
+
+    raise Exception('No seat found with number {0!s}!'.format(seat_number))
+
 
 def count_seats(seats):
     count_dict = {}
@@ -333,6 +345,7 @@ def count_seats(seats):
         count_dict[seat_key] = len(sorted_seats[seat_key])
 
     return count_dict
+
 
 def sort_seats(seats):
     sorted_dict = {}
