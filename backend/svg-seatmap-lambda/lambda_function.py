@@ -100,11 +100,12 @@ def generate_parquett_svg(rows_json, seat):
     min_left = 0
     max_right = 0
     max_y = 0
+    row_amount = -1
 
     for row_number, row in enumerate(rows_json):
         x_offset = -PERRSPECTIVE_X * row_number
         y_offset = (LENGTH_TOP + HEIGTH) * row_number
-
+        row_amount += 1
         min_left = min(min_left, x_offset)
         max_right = max(max_right, x_offset)
         max_y = max(max_y, y_offset + HEIGTH + LENGTH_TOP)
@@ -125,11 +126,11 @@ def generate_parquett_svg(rows_json, seat):
 
         for seatNumber in range(row["left"]):
             draw_seat(dwg, x_offset - STAIRS_WITH_LEFT -
-                      SEAT_PADDING * seatNumber, y_offset, seat["side"] == "left" and seat["row"] == row_number and seat["number"] == seatNumber)
+                      SEAT_PADDING * seatNumber, y_offset, seat["side"] == "left" and seat["row"] == row_amount - row_number and seat["number"] == seatNumber)
 
         for seatNumber in range(row["right"]):
             draw_seat(dwg, x_offset + STAIRS_WITH_RIGHT +
-                      SEAT_PADDING * seatNumber, y_offset, seat["side"] == "right" and seat["row"] == row_number and seat["number"] == seatNumber)
+                      SEAT_PADDING * seatNumber, y_offset, seat["side"] == "right" and seat["row"] == row_amount - row_number and seat["number"] == seatNumber)
 
     dwg.save()
 
