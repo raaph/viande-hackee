@@ -180,9 +180,14 @@ def lambda_handler(event, context):
     with open('/tmp/stadium_data.json', 'wb') as file:
         file.write(lines)
 
-    rows = prepare_block_for_drawing(block_number)
-    highlighted_seat = get_highlighted_seat(
-        block_number, row_number, seat_number)
+    try:
+        rows = prepare_block_for_drawing(block_number)
+        highlighted_seat = get_highlighted_seat(block_number, row_number, seat_number)
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'ExceptionMessage': e})
+        }
 
     block = get_block(block_number)
 
