@@ -20,7 +20,7 @@ SEAT_VERTICAL_SHIFT = 7
 CIRCLE_RADIUS = 5
 
 BALCONY_OFFSET_LEFT = {0: 3, 1: 3, 2: 3}
-BALCONY_OFFSET_RIGHT = {0: 10, 1: 10, 2: 10, 3: 7, 4: 7, 5: 7, 6: 5, 20: -2}
+BALCONY_OFFSET_RIGHT = {0: 10, 1: 10, 2: 10, 3: 7, 4: 7, 5: 7, 6: 5, 19: -2}
 
 BALCONY_FIRST_ROWS = 2
 BALCONY_FIRST_ROWS_MIDDLE_SEATS = 12
@@ -83,7 +83,7 @@ def generate_balcony_svg(rows_json, seat):
                 draw_seat(dwg, x_offset - x_left_additional + STAIRS_WITH_RIGHT +
                           (SEAT_PADDING * 0.9) * seatNumber, y_offset, seat["side"] == "middle" and seat["row"] == row_number and seat["number"] == seatNumber)
 
-        if row_number < 20:
+        if row_number < 19:
             draw_stairs(dwg, x_offset - x_left_additional, y_offset)
 
         for seatNumber in range(row["left"]):
