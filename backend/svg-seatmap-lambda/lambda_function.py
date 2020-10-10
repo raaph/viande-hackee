@@ -182,7 +182,8 @@ def lambda_handler(event, context):
 
     try:
         rows = prepare_block_for_drawing(block_number)
-        highlighted_seat = get_highlighted_seat(block_number, row_number, seat_number)
+        highlighted_seat = get_highlighted_seat(
+            block_number, row_number, seat_number)
     except Exception as e:
         return {
             'statusCode': 500,
@@ -241,7 +242,8 @@ def prepare_block_for_drawing(block_number):
             prepared_row[LARGER_SIDE] = counted_seats_dict[keys[0]
                                                            ] - subtract_amount
 
-    prepared_rows.reverse()
+    if block['level'] == 'Parkett':
+        prepared_rows.reverse()
     return prepared_rows
 
 
