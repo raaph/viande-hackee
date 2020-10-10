@@ -6,7 +6,7 @@
         {
             "label": "deploy_seatmap",
             "type": "shell",
-            "command": "cd ./backend/svg-seatmap-lambda && pip install -t ./ -r requirements.txt && zip -r ../svg-lambda-deployment.zip . && cd .. && aws lambda update-function-code --function-name seatmap-lambda --zip-file fileb://svg-lambda-deployment.zip && rm ./svg-lambda-deployment.zip",
+            "command": "cd ./backend/svg-seatmap-lambda && pip install -t ./ -r requirements.txt && zip -r ../svg-lambda-deployment.zip . && cd .. && aws lambda update-function-code --function-name seat-map-ireland --zip-file fileb://svg-lambda-deployment.zip && rm ./svg-lambda-deployment.zip",
             "group": "build",
             "presentation": {
                 "reveal": "always",
@@ -17,6 +17,16 @@
             "label": "deploy_waittime",
             "type": "shell",
             "command": "cd ./backend/wait_times_lambda && pip install -t ./ -r requirements.txt && zip -r ../time-lambda-deployment.zip . && cd .. && aws lambda update-function-code --function-name wait_times --zip-file fileb://time-lambda-deployment.zip && rm ./time-lambda-deployment.zip",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "deploy_validateseat",
+            "type": "shell",
+            "command": "cd ./backend/seat_validation_lambda && pip install -t ./ -r requirements.txt && zip -r ../validation-lambda-deployment.zip . && cd .. && aws lambda update-function-code --function-name seat-validation --zip-file fileb://validation-lambda-deployment.zip && rm ./validation-lambda-deployment.zip",
             "group": "build",
             "presentation": {
                 "reveal": "always",
